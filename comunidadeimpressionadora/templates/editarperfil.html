@@ -1,0 +1,73 @@
+{% extends 'perfil.html' %}
+
+{% block form_editar_perfil %}
+<div class="container">
+    <hr>
+    <div class="row">
+        <div class="col">
+            <!-- sempre que subir arquivo tem que colocar no form o parametro enctype, senão não faz a validação -->
+            <form method="POST" action="" class="border p-4 mt-2" enctype="multipart/form-data">
+                <!-- código pra habilitar o token no form -->
+                {{ form.csrf_token }}
+                <legend>Editar Perfil</legend>
+                <fieldset>
+                    <div class="form-group">
+                        {{ form.username.label(class="form-control-label") }}
+                        <!-- tratar erros de validação-->
+                        {% if form.username.errors %}
+                        <!-- (class='form-control') aplicar uma classe do bootscrap na variavel -->
+                        {{ form.username(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for erro in form.username.errors %}
+                            {{ erro }}
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <!-- (class='form-control') aplicar uma classe do bootscrap na variavel -->
+                        {{ form.username(class="form-control") }}
+                        {% endif %}
+                    </div>          
+                    <div class="form-group">
+                        {{ form.email.label(class="form-control-label") }}
+                        <!-- tratar erros de validação-->
+                        {% if form.email.errors %}
+                        <!-- (class='form-control') aplicar uma classe do bootscrap na variavel -->
+                        {{ form.email(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for erro in form.email.errors %}
+                            {{ erro }}
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <!-- (class='form-control') aplicar uma classe do bootscrap na variavel -->
+                        {{ form.email(class="form-control") }}
+                        {% endif %}
+                    </div>    
+                    <div class="form-group">
+                        {{ form.foto_perfil.label }}
+                        {{ form.foto_perfil(class="form-control-file") }}
+                        {% if form.foto_perfil.errors %}
+                            {% for erro in form.foto_perfil.errors %}
+                                <span class="text-danger">{{ erro }}</span><br>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <hr>
+                    <p>Cursos</p>
+                    {% for campo in form %}
+                        {% if 'curso_' in campo.name %}
+                            <div class="form-group">
+                                {{ campo(class="form-check-input") }}
+                                {{ campo.label(class="form-check-label") }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </fieldset>
+                {{ form.botao_submit_editarperfil(class="btn btn-primary mt-2") }}
+            </form>
+        </div>
+        
+    </div>
+</div>
+
+{% endblock %}

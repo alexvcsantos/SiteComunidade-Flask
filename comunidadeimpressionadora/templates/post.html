@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container mt-3">
+        <div class="row border mt-4 p-3 meupost">
+            <!-- o bootscrap divide o tamanho da tela em 12 colunas-->
+            <div class="col col-3">
+                <div class="image pe-2">
+                    <img src="{{ url_for('static', filename='fotos_perfil/{}'.format(post.autor.foto_perfil)) }}" class="rounded" width="200">
+                </div>
+                <strong>{{ post.autor.username }}</strong>
+                <div class="row">
+                    {% for curso in post.autor.cursos.split(';') %}
+                        <button type="button" class="btn btn-success mt-2" disabled>{{ curso }}</button>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col col-9">
+                <h3>{{ post.titulo }}
+                    <small class="text-muted" style="font-size: 15px"> - Data de Criação: {{ post.data_criacao.strftime('%d/%m/%Y') }}
+                    {% if form %}
+                    <!-- href="form_editarpost" - #form_editarpost é um link dentro da pagina pro id='form_editarpost' -->
+                        - <a href="#form_editarpost">Editar Post</a> / <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#ExcluirPost">Excluir Post</a>
+                    {% endif %}
+                    </small>
+                </h3>
+                <p>{{ post.corpo }}</p>
+            </div>
+        </div>
+</div>
+<!-- se o form existir cria o formulario-->
+{% if form %}
+<div class="container">
+    <hr>
+    <div class="row">
+        <div class="col">
+            <!-- sempre que subir arquivo tem que colocar no form o parametro enctype, senão não faz a validação -->
+            <form method="POST" action="" id="form_editarpost" class="border p-4 mt-2">
+                <!-- código pra habilitar o token no form -->
+                {{ form.csrf_token }}
+                <legend>Editar Post</legend>
+                <fieldset>
+                    <div class="form-group">
+                        {{ form.titulo.label(class="form-control-label") }}
+                        <!-- tratar erros de validação-->
+                        {% if form.titulo.errors %}
+                        <!-- (class='form-control') aplicar uma classe do bootscrap na variavel -->
+                        {{ form.titulo(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for erro in form.titulo.errors %}
+                            {{ erro }}
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <!-- (class='form-control') aplicar uma classe do bootscrap na variavel -->
+                        {{ form.titulo(class="form-control") }}
+                        {% endif %}
+                    </div>    
+                    <div class="form-group">
+                        {{ form.corpo.label(class="form-control-label") }}
+                        <!-- tratar erros de validação-->
+                        {% if form.corpo.errors %}
+                        <!-- (class='form-control') aplicar uma classe do bootscrap na variavel -->
+                        {{ form.corpo(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for erro in form.corpo.errors %}
+                            {{ erro }}
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <!-- (class='form-control') aplicar uma classe do bootscrap na variavel -->
+                        {{ form.corpo(class="form-control") }}
+                        {% endif %}
+                    </div>            
+                </fieldset>
+                {{ form.botao_submit(class="btn btn-primary mt-2") }}
+            </form>
+        </div>    
+    </div>
+</div>
+{% endif %}
+
+<!-- Modal - caixa confirmação excluir -->
+<div class="modal fade" id="ExcluirPost" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Excluir Post</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Você quer realmente excluir esse post? (Essa ação não pode ser desfeita)
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <!-- tem que criar esse form e mudar o type=button para type=submit, é um formulario que só tem o botao e envia uma ação-->
+            <form method="POST" action="{{ url_for('excluir_post', post_id=post.id) }}">
+                <button type="submit" class="btn btn-danger">Excluir Post</button>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
