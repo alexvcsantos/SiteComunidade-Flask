@@ -5,9 +5,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 # função flask para fazer Login - pip install flask-login
 from flask_login import LoginManager
+import os
 
 # CONFIGURAÇÃO DO SITE
-
 app = Flask(__name__)
 
 '''entrar no cmd para gerar um token autom. -> digite python
@@ -16,8 +16,13 @@ secret.token_hex(16)
 só copiar o token gerado'''
 
 app.config['SECRET_KEY'] = '38d0fbbce56ec6746901d03a202a8435'
-# configurar o banco de dados, caminho do banco de dados, no mesmo local do main.py
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///comunidade.db'
+# configurar o banco de dados, caminho do banco de dados
+if os.getenv("DATABASE_URL"):
+    # se tiver no servidor pega o valor dessa variavel
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
+else:
+    # se estiver local esse caminho
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///comunidade.db'
 
 # criar o banco de dados apartir do app
 database = SQLAlchemy(app)
