@@ -6,6 +6,7 @@ from flask_bcrypt import Bcrypt
 # função flask para fazer Login - pip install flask-login
 from flask_login import LoginManager
 import os
+import sqlalchemy
 
 # CONFIGURAÇÃO DO SITE
 app = Flask(__name__)
@@ -36,10 +37,19 @@ login_manager.login_view = 'login'
 login_manager.login_message = 'Faça o Login pra acessar este conteúdo'
 login_manager.login_message_category = 'alert-info'
 
+# criar banco de dados local
+# with app.app_context():
+#     database.create_all()
+
+# criar banco de dados online
+from comunidadeimpressionadora import models
+engine = sqlalchemy.create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+inspector = sqlalchemy.inspect(engine)
+# verificar se no banco de dados tem a tabela Usuario
+if not inspector.has_table("usuario"):
+    with app.app_context():
+        database.drop_all()
+        database.create_all()
 
 # TEM QUE SER NO FINAL - pra importar os routes(links) o app tem que estar criado
 from comunidadeimpressionadora import routes
-
-# criar banco de dados
-# with app.app_context():
-#     database.create_all()
