@@ -56,8 +56,8 @@ def login():
         else:
             flash(f'Falha no Login. E-mail ou Senha Inválido', 'alert-danger')
     if form_criarconta.validate_on_submit() and 'botao_submit_criarconta' in request.form:
-        # criptografar senha
-        senha_crypt = bcrypt.generate_password_hash(form_criarconta.senha.data)
+        # criptografar senha (.decode("utf-8") - pra funcionar no postgres do railway)
+        senha_crypt = bcrypt.generate_password_hash(form_criarconta.senha.data).decode("utf-8")
         # pegar dados do usuário
         usuario = Usuario(username=form_criarconta.username.data,
                           email=form_criarconta.email.data,
